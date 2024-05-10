@@ -8,38 +8,39 @@ const openconsole = document.querySelector('#console')
 const isDebugSwitch = document.querySelector('debugbutton')
 voiceURL = null
 //postURL = 'https://hoge.fuga/upload'
-postURL = 'http://127.0.0.1:8000/upload/testfile'
+// postURL = 'http://127.0.0.1:8000/upload/testfile'
+postURL = 'http://sssuma.com:8000/upload/testfile'
 
-window.onload = ()=>{
+window.onload = () => {
     openconsole.insertAdjacentHTML('beforeend', '[MESSAGE] Loading...<br>')
     openconsoleScroll()
 
-	if(!navigator.mediaDevices){
-		console.log("Media Devices not supported!!");
+    if (!navigator.mediaDevices) {
+        console.log("Media Devices not supported!!");
         openconsole.insertAdjacentHTML('beforeend', '<font color="#e11">[ERROR]</font> Media devices not supported.<br>')
         openconsoleScroll()
-		return;
-	}
+        return;
+    }
 
-	navigator.mediaDevices.getUserMedia({audio: true}).then((stream)=>{
-		readyMediaRecorder(stream); // Ready for Rec.
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        readyMediaRecorder(stream); // Ready for Rec.
         openconsole.insertAdjacentHTML('beforeend', '<font color="#3d2">[SUCCESS]</font> Ready for Recording.<br>')
         openconsoleScroll()
-	}).catch((err)=>{
-		console.log("Error:" + err); // Error
+    }).catch((err) => {
+        console.log("Error:" + err); // Error
         openconsole.insertAdjacentHTML('beforeend', '<font color="#e11">[ERROR]</font> Any media devices are none.<br>')
         openconsoleScroll()
-	});
+    });
 }
 
-function readyMediaRecorder(stream){
+function readyMediaRecorder(stream) {
 
     let mediaRecorder = new MediaRecorder(stream)
 
-    mediaRecorder.onstop = (e)=>{
+    mediaRecorder.onstop = (e) => {
         openconsole.insertAdjacentHTML('beforeend', '[MESSAGE] Stop recording<br>')
         openconsoleScroll()
-        const blob = new Blob(chunks, {"type":"audio/ogg; codecs=opus"}) //save as OGG. i hate mp3
+        const blob = new Blob(chunks, { "type": "audio/ogg; codecs=opus" }) //save as OGG. i hate mp3
         voiceURL = blob
         //console.log("停止時のblob URL" + voiceURL)
         chunks = [] // initing
@@ -51,18 +52,18 @@ function readyMediaRecorder(stream){
         reader.readAsDataURL(blob)
     }
 
-    mediaRecorder.ondataavailable = (e)=>{
+    mediaRecorder.ondataavailable = (e) => {
         chunks.push(e.data)
     }
 
-    mediaRecorder.onerror = (e)=>{
+    mediaRecorder.onerror = (e) => {
         console.log("MediaRecorder onerror:" + e)
-        openconsole.insertAdjacentHTML('beforeend', '<font color="#e11">[ERROR]</font> MediaRecorder onerror: ' + e +  '<br>')
+        openconsole.insertAdjacentHTML('beforeend', '<font color="#e11">[ERROR]</font> MediaRecorder onerror: ' + e + '<br>')
         openconsoleScroll()
     }
 
-    buttonStart.onclick = ()=>{
-        if(mediaRecorder.state == "recording") return
+    buttonStart.onclick = () => {
+        if (mediaRecorder.state == "recording") return
         mediaRecorder.start()
         buttonStart.setAttribute('disabled', '')
         buttonStop.removeAttribute('disabled')
@@ -70,21 +71,21 @@ function readyMediaRecorder(stream){
         openconsoleScroll()
     }
 
-    buttonStop.onclick = ()=>{
-        if(mediaRecorder.state == "inactive") return
+    buttonStop.onclick = () => {
+        if (mediaRecorder.state == "inactive") return
         mediaRecorder.stop()
         buttonStop.setAttribute('disabled', '')
         buttonStart.removeAttribute('disabled')
     }
 
     buttonSend.onclick = async () => {
-        if(mediaRecorder.state == "recording") return
+        if (mediaRecorder.state == "recording") return
 
         try {
             // POST
             var statuscode = await sendAudio(voiceURL);
             console.log('statuscode: ' + statuscode);
-            
+
             // 200だかなんだかが返ってきたら進む
             if (statuscode == 200) {
                 URL.revokeObjectURL(player.src);
@@ -104,16 +105,16 @@ function readyMediaRecorder(stream){
     }
 }
 
-async function sendAudio (targetblob) {
+async function sendAudio(targetblob) {
     var sending = new FormData()
     sending.append('audio', targetblob)
-    
+
     try {
         const response = await fetch(postURL, {
             method: 'POST',
             body: sending
         });
-        
+
         openconsole.insertAdjacentHTML('beforeend', '<font color="#3d2">[SUCCESS]</font> HTTP statuscode:' + response.status + '<br>')
         openconsoleScroll()
         console.log('そうしんしたよ statuscodeは' + response.status + 'だよ');
@@ -126,13 +127,13 @@ async function sendAudio (targetblob) {
     }
 }
 
-isDebugSwitch.onclick = () => { 
+isDebugSwitch.onclick = () => {
     openconsole.computedStyleMap.maxWidth = '0px'
 }
 
 
 function openconsoleScroll() {
     openconsole,
-    areaHeight = openconsole.scrollHeight;
+        areaHeight = openconsole.scrollHeight;
     openconsole.scrollTop = areaHeight;
 }
