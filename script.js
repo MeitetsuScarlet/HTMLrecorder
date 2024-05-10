@@ -5,7 +5,8 @@ const buttonStop = document.querySelector('#buttonStop')
 const buttonSend = document.querySelector('#buttonSend')
 const player = document.querySelector('#player')
 const openconsole = document.querySelector('#console')
-const isDebugSwitch = document.querySelector('debugbutton')
+const isDebugSwitch = document.getElementById('debugbutton')
+var isDebugMode = 0;
 voiceURL = null
 //postURL = 'https://hoge.fuga/upload'
 // postURL = 'http://127.0.0.1:8000/upload/testfile'
@@ -128,7 +129,13 @@ async function sendAudio(targetblob) {
 }
 
 isDebugSwitch.onclick = () => {
-    openconsole.computedStyleMap.maxWidth = '0px'
+    if (isDebugMode) {
+        openconsole.style.maxWidth = '0px'
+        isDebugMode = 0
+    } else {
+        openconsole.style.maxWidth = ''
+        isDebugMode = 1
+    }
 }
 
 
