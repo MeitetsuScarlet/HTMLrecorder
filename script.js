@@ -128,6 +128,26 @@ async function sendAudio(targetblob) {
     }
 }
 
+async function loadCSVData() {
+    const response = await fetch('./courpas.csv');
+    const text = await response.text();
+    const data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
+    console.log(data);
+    // const articles = data.slice(1)
+    //   .map(x => `
+    //     <article>
+    //       <h3>${x[0]}</h3>
+    //       <p>${x[1]}</p>
+    //       <p>${x[3]}</p>
+    //       <img src="${x[2]}" alt="" loading="lazy" width="100%" height="auto">
+    //     </article>
+    //   `)
+    //   .join('');
+    // document.getElementById('js-csv').innerHTML = articles;
+}
+loadCSVData();
+
+
 isDebugSwitch.onclick = () => {
     if (isDebugMode) {
         openconsole.style.maxWidth = '0px'
