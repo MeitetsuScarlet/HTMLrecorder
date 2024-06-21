@@ -167,10 +167,10 @@ isDebugSwitch.onclick = () => {
 buttonBack.onclick = () => {
     if(nowCourpas != 0){
         nowCourpas--;
-        buttonNext.setAttribute('disabled', '');
+        buttonNext.removeAttribute('disabled');
         csvDisplay(nowCourpas);
         if(nowCourpas == 0){
-            buttonBack.setAttribute('disabled');
+            buttonBack.setAttribute('disabled', '');
         }
     }
 }
@@ -178,10 +178,10 @@ buttonBack.onclick = () => {
 buttonNext.onclick = () => {
     if(nowCourpas != data.length){
         nowCourpas++;
-        buttonBack.setAttribute('disabled', '');
+        buttonBack.removeAttribute('disabled');
         csvDisplay(nowCourpas);
         if(nowCourpas == data.length){
-            buttonNext.setAttribute('disabled');
+            buttonNext.setAttribute('disabled', '');
         }
     }
 }
