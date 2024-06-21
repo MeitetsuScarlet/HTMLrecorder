@@ -1,18 +1,24 @@
 //あたらしいやつ
 chunks = [];
+data = [];
+const courpas = document.querySelector('#titlelabel')
 const buttonStart = document.querySelector('#buttonStart')
 const buttonStop = document.querySelector('#buttonStop')
 const buttonSend = document.querySelector('#buttonSend')
+const buttonBack = document.querySelector('#buttonBack')
+const buttonNext = document.querySelector('#buttonNext')
 const player = document.querySelector('#player')
 const openconsole = document.querySelector('#console')
 const isDebugSwitch = document.getElementById('debugbutton')
 var isDebugMode = 0;
+var nowCourpas = 0;
 voiceURL = null
 //postURL = 'https://hoge.fuga/upload'
 postURL = 'https://oudunlab.net/upload/testfile'
 //postURL = 'http://sssuma.com/upload/testfile'
 
 window.onload = () => {
+    loadCSVData();
     openconsole.insertAdjacentHTML('beforeend', '[MESSAGE] Loading...<br>')
     openconsoleScroll()
 
@@ -131,8 +137,9 @@ async function sendAudio(targetblob) {
 async function loadCSVData() {
     const response = await fetch('./courpas.csv');
     const text = await response.text();
-    const data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
+    data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
     console.log(data);
+    csvDisplay(nowCourpas);
     // const articles = data.slice(1)
     //   .map(x => `
     //     <article>
@@ -145,7 +152,6 @@ async function loadCSVData() {
     //   .join('');
     // document.getElementById('js-csv').innerHTML = articles;
 }
-loadCSVData();
 
 
 isDebugSwitch.onclick = () => {
@@ -156,6 +162,32 @@ isDebugSwitch.onclick = () => {
         openconsole.style.maxWidth = ''
         isDebugMode = 1
     }
+}
+
+buttonBack.onclick = () => {
+    if(nowCourpas != 0){
+        nowCourpas--;
+        buttonNext.setAttribute('disabled', '');
+        csvDisplay(nowCourpas);
+        if(nowCourpas == 0){
+            buttonBack.setAttribute('disabled');
+        }
+    }
+}
+
+buttonNext.onclick = () => {
+    if(nowCourpas != data.length){
+        nowCourpas++;
+        buttonBack.setAttribute('disabled', '');
+        csvDisplay(nowCourpas);
+        if(nowCourpas == data.length){
+            buttonNext.setAttribute('disabled');
+        }
+    }
+}
+
+function csvDisplay(column){
+    courpas.innerHTML = data[column][2];
 }
 
 
