@@ -61,7 +61,7 @@ async def root():
     
 
 @app.get("/api")
-async def root():
+async def apiroot():
     return {"message": "Welcome to my World. This is HC85."}
 
 
