@@ -40,7 +40,7 @@ if not os.path.exists("./ogg"):
 # CORS-block avoiding
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://rec.oudunlab.net", "https://hc.oudunlab.net"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"]
