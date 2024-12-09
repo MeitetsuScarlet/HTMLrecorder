@@ -120,7 +120,7 @@ def record_bulk_vote(bulk_vote: BulkVote, db: Session = Depends(get_db)):
     return {"message": f"{vote_count} votes recorded successfully", "total_votes": vote_count}
 
     
-@app.get("/result/")
+@app.get("/result")
 def get_results(db: Session = Depends(get_db)):
     results = db.query(Vote).all()
     formatted_results = [
