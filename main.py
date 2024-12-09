@@ -125,7 +125,7 @@ def get_results(db: Session = Depends(get_db)):
     results = db.query(Vote).all()
     formatted_results = [
         {
-            "sentence_id": result.sentence_id,
+            "sentence_id": result.sentence,
             "score: 1": result.score_one,
             "score: 2": result.score_two,
             "score: 3": result.score_thr,
