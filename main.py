@@ -138,6 +138,20 @@ def get_results(db: Session = Depends(get_db)):
     ]
     return {"results": formatted_results}
 
+@app.delete("/result-delete", status_code=200)
+def delete_all_results(db: Session = Depends(get_db)):
+    """
+    データベース内のすべての投票データを削除します。
+    """
+    try:
+        # Voteテーブルの全データを削除
+        deleted_count = db.query(Vote).delete()
+        db.commit()
+        return {"message": "All votes have been deleted.", "deleted_count": deleted_count}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug")
