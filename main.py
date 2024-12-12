@@ -18,13 +18,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # データベースモデル
 class Vote(Base):
     __tablename__ = "votes"
-    sentence = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, primary_key=True, default=datetime.utcnow)
+    sentence = Column(Integer)
     score_one = Column(Integer, default=0)
     score_two = Column(Integer, default=0)
     score_thr = Column(Integer, default=0)
     score_fou = Column(Integer, default=0)
     score_fiv = Column(Integer, default=0)
-    timestamp = Column(DateTime, default=datetime.utcnow)
 
 Base.metadata.create_all(bind=engine)
 
@@ -40,9 +40,9 @@ if not os.path.exists("./ogg"):
 # CORS-block avoiding
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://rec.oudunlab.net", "https://hc.oudunlab.net"],
+    allow_origins=["https://rec.oudunlab.net", "https://shirane.pages.dev"],
     # allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"]
 )
 
@@ -99,25 +99,27 @@ async def fileget(request: Request, courpus):
 def record_bulk_vote(bulk_vote: BulkVote, db: Session = Depends(get_db)):
     sentence_id = bulk_vote.sentence_id
     scores = bulk_vote.score
+    sum = 0
 
     # スコアをカウント
-    if len(scores) != 5 or any(score < 1 or score > 5 for score in scores):
+    if len(scores) != 5:
         raise HTTPException(status_code=400, detail="Invalid score data")
-    score_counts = [scores.count(i + 1) for i in range(5)]
+    for i in scores:
+        sum += i
 
     # データベースに保存
     new_vote = Vote(
         sentence=sentence_id,
-        score_one=score_counts[0],
-        score_two=score_counts[1],
-        score_thr=score_counts[2],
-        score_fou=score_counts[3],
-        score_fiv=score_counts[4],
+        score_one=scores[0],
+        score_two=scores[1],
+        score_thr=scores[2],
+        score_fou=scores[3],
+        score_fiv=scores[4],
     )
     db.add(new_vote)
     db.commit()
     
-    return {"message": f"{vote_count} votes recorded successfully", "total_votes": vote_count}
+    return {"message": "your votes recorded successfully", "total_votes": sum}
 
     
 @app.get("/result")
